@@ -6,6 +6,18 @@
     "name": "Valiton GmbH",
     "url": "http://www.valiton.com"
   },
+  "contributors": [
+    {
+      "name": "Bastian Behrens",
+      "email": "bastian.behrens@valiton.com"
+    }
+  ],
+  "maintainers": [
+    {
+      "name": "Bastian Behrens",
+      "email": "bastian.behrens@valiton.com"
+    }
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/valiton/node-various-cluster.git"

@@ -76,7 +76,6 @@ variouscluster.init({
 
 ```javascript
 // and in your worker create a constructor function receiving this config
-
 function SomeWorker(config) {
   this.config = config;
 }
@@ -89,7 +88,24 @@ SomeWorker.prototype.init = function () {
 }
 ```
 
+### Logging
+
+various cluster will try to use a logger-instance which is appended to the current process. this logger instance needs a 'crit' and a 'notice' method. if no process.logger is present, it just uses node.js native [util.log()](http://nodejs.org/api/util.html#util_util_log_string)
+
+```javascript
+// in your master create a logger:
+process.logger = {
+  crit: function (msg) {
+    console.error(msg);
+  },
+  notice: function (msg) {
+    console.log(msg);
+  }
+};
+```
+
 ### Shutdown
+
 in every worker-process you can append a shutdown-Listener if you want to cleanup something in your application before shutting down:
 
 ```javascript
