@@ -1,0 +1,40 @@
+{
+  "name": "various-cluster",
+  "description": "easily create a mulit-cluster environment with different worker-types",
+  "version": "0.1.0",
+  "author": {
+    "name": "Valiton GmbH",
+    "url": "http://www.valiton.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/valiton/node-various-cluster.git"
+  },
+  "bugs": {
+    "url": "https://github.com/valiton/node-various-cluster/issues"
+  },
+  "main": "lib/various-cluster",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "grunt default"
+  },
+  "dependencies": {
+    "lodash": "1.2.0",
+    "pretty-seconds": "0.1.0"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-coffee": "~0.4.0",
+    "grunt-contrib-clean": "~0.4.0",
+    "grunt-coffeelint": "~0.0.6",
+    "grunt-contrib-connect": "~0.3.0",
+    "grunt-jsdoc": "~0.3.1",
+    "grunt-jasmine-node": "~0.1.0",
+    "jasmine-matchers": "~0.2.1"
+  },
+  "keywords": [
+    "nodevariouscluster"
+  ]
+}
