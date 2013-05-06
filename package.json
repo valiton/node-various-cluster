@@ -1,7 +1,7 @@
 {
   "name": "various-cluster",
   "description": "easily create a mulit-cluster environment with different worker-types",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "Valiton GmbH",
     "url": "http://www.valiton.com"
@@ -47,6 +47,10 @@
     "jasmine-matchers": "~0.2.1"
   },
   "keywords": [
-    "nodevariouscluster"
+    "cluster",
+    "worker",
+    "multiple",
+    "types",
+    "different"
   ]
 }
