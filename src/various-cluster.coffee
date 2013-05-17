@@ -57,14 +57,10 @@ class VariousCluster
     if cluster.isMaster
       process.title = @config.title or 'various-cluster-master'
 
-      cluster.on 'exit', (msg) =>
-        _log.call this, 'notice', util.format('%s with pid %s has no workers remaining, exit after %s uptime', @config.title, process.pid, prettySeconds(process.uptime()))
-        return process.exit 0
-
-      cluster.on 'message', (msg) =>
-        if msg is 'worker-exception'
-          _log.call this, 'notice', util.format('%s with pid %s was informed of worker-exception, shutdown all workers: %s', @config.title, process.pid, err)
-          cluster.disconnect()
+      cluster.on 'exit', (worker, code, signal) =>
+        if Object.keys(cluster.workers).length is 0
+          _log.call this, 'notice', util.format('%s with pid %s has no workers remaining, exit after %s uptime', @config.title, process.pid, prettySeconds(process.uptime()))
+          process.exit 0
 
       process.on 'uncaughtException', (err) =>
         _log.call this, 'crit', util.format('%s with pid %s had uncaught exception, shutdown all workers: %s', @config.title, process.pid, err)

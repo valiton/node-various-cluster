@@ -116,6 +116,12 @@ process.on('shutdown', function (done) {
 ```
 if the cleanup takes longer than in your config defined, the process will be forced to exit!
 
+### uncaughtExceptions
+
+per default if in the master an uncaught-exception happens, the whole application will gracefully shutdown.
+
+if a worker has an uncaughtException, it depends on your configuration. per default this worker is gracefully shutdown and is reforked. if you
+configure a workertype with the config-parameter 'shutdownAll: true', the whole application will gracefully shutdown.
 
 ### CONFIG which you provide in the init-method
 
@@ -152,6 +158,10 @@ workercount which should be used, DEFAULT: config.count
 #### config.workers[x].shutdownTimeout
 
 shutdownTimeout in ms, DEFAULT: config.shutdownTimeout
+
+#### config.workers[x].shutdownAll
+
+shutdown all workertypes and workers if this worker has an uncaught exception, DEFAULT: false
 
 #### config.workers[x].config
 

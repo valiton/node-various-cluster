@@ -22,6 +22,31 @@ module.exports = class WorkerType
     util.log msg
 
 
+  _fork = (config) ->
+    self = this
+    cluster.fork('WORKER_CONFIG': JSON.stringify(config))
+
+      .on 'message', (msg) ->
+        if msg is 'worker-exception'
+          @destroy()
+      .on 'online', ->
+        _log.call self, 'notice', util.format('%s with pid %s is online', self.config.title, @process.pid)
+
+      .on 'exit', (worker, code, signal) ->
+        _log.call self, 'notice', util.format('%s with pid %s exits now', self.config.title, @process.pid)
+        if self.config.shutdownAll is true
+          _log.call self, 'notice', util.format('worker %s is configured to shutdown app, do this now', config.title)
+          return cluster.disconnect()
+
+        process.nextTick ->
+          _log.call self, 'notice', util.format('master with pid %s will restart this worker now', @process.pid)
+          _fork.call self, config
+
+
+      .on 'disconnect', ->
+        _log.call self, 'notice', util.format('%s with pid %s is disconnected', self.config.title, @process.pid)
+
+
   ###*
    * create a new WorkerType instance
    *
@@ -36,29 +61,10 @@ module.exports = class WorkerType
 
 
   init: (config) ->
-    self = this
-
     @config = _.defaults config, defaultConfig
     workers = []
     for item in [1..@config.count]
       do =>
-        config = @config
-        cluster.fork('WORKER_CONFIG': JSON.stringify(@config))
-
-          .on 'message', (msg) ->
-            if msg.type is 'worker-exception'
-              _log.call self, 'notice', util.format('%s with pid %s was informed of worker-exception, shutdown all workers', config.title, process.pid)
-              cluster.disconnect()
-
-          .on 'online', ->
-            _log.call self, 'notice', util.format('%s with pid %s is online', self.config.title, @process.pid)
-
-          .on 'exit', (worker, code, signal) ->
-            _log.call self, 'notice', util.format('%s with pid %s exits now', self.config.title, @process.pid)
-            cluster.disconnect()
-
-          .on 'disconnect', ->
-            _log.call self, 'notice', util.format('%s with pid %s is disconnected', self.config.title, @process.pid)
-
+        _fork.call this, @config
 
 

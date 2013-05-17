@@ -42,11 +42,17 @@ module.exports = class Worker
 
 
   _appendEvents = ->
+    @connected = true
     process.on 'disconnect', =>
+      @connected = false
       _shutdown.call this
 
     process.on 'uncaughtException', (err) =>
-      _log.call this, 'crit', util.format('%s with pid %s had uncaught exception: %s', @config.title, process.pid, err)
+      if @connected
+        _log.call this, 'crit', util.format('%s with pid %s had uncaught exception: %s', @config.title, process.pid, err)
+        process.send 'worker-exception'
+      else
+        process.exit()
 
     ['SIGINT', 'SIGTERM'].forEach (signal) =>
       process.on signal, => _log.call this, 'notice', util.format('%s with pid %s received signal %s', @config.title, process.pid, signal)
