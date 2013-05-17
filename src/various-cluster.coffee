@@ -30,6 +30,10 @@ class VariousCluster
   _log = (type, msg) ->
     util.log msg
 
+  _exit = ->
+    if Object.keys(cluster.workers).length is 0
+      _log.call this, 'notice', util.format('%s with pid %s has no workers remaining, exit after %s uptime', @config.title, process.pid, prettySeconds(process.uptime()))
+      process.exit 0
 
   ###*
    * create a new VariousCluster instance,
@@ -58,9 +62,7 @@ class VariousCluster
       process.title = @config.title or 'various-cluster-master'
 
       cluster.on 'exit', (worker, code, signal) =>
-        if Object.keys(cluster.workers).length is 0
-          _log.call this, 'notice', util.format('%s with pid %s has no workers remaining, exit after %s uptime', @config.title, process.pid, prettySeconds(process.uptime()))
-          process.exit 0
+        _exit.call this
 
       process.on 'uncaughtException', (err) =>
         _log.call this, 'crit', util.format('%s with pid %s had uncaught exception, shutdown all workers: %s', @config.title, process.pid, err)
@@ -69,6 +71,7 @@ class VariousCluster
       ['SIGINT', 'SIGTERM'].forEach (signal) =>
         process.on signal, =>
           _log.call this, 'notice', util.format('%s with pid %s received signal %s, shutdown all workers', @config.title, process.pid, signal)
+          _exit.call this
           cluster.disconnect()
 
       for workerConfig in @config.workers

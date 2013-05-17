@@ -177,6 +177,8 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 
+- 0.1.2 better exception handling + cleaner shutdown
+
 - 0.1.1 Added some keywords
 
 - 0.1.0 Initial Release
