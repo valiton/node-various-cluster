@@ -38,9 +38,10 @@ module.exports = class WorkerType
           _log.call self, 'notice', util.format('worker %s is configured to shutdown app, do this now', config.title)
           return cluster.disconnect()
 
-        process.nextTick ->
-          _log.call self, 'notice', util.format('master with pid %s will restart this worker now', @process.pid)
-          _fork.call self, config
+        unless process.shuttingDown
+          process.nextTick ->
+            _log.call self, 'notice', util.format('master with pid %s will restart this worker now', @process.pid)
+            _fork.call self, config
 
 
       .on 'disconnect', ->

@@ -31,6 +31,7 @@ class VariousCluster
     util.log msg
 
   _exit = ->
+    process.shuttingDown = true
     if Object.keys(cluster.workers).length is 0
       _log.call this, 'notice', util.format('%s with pid %s has no workers remaining, exit after %s uptime', @config.title, process.pid, prettySeconds(process.uptime()))
       process.exit 0
