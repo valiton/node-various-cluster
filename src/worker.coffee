@@ -19,7 +19,8 @@ module.exports = class Worker
     _log.call this, 'notice', util.format('%s with pid %s will start graceful shutdown',  @config.title, process.pid)
     shutDowns = process.listeners('shutdown').length
     if shutDowns is 0
-      return _log.call this, 'notice', util.format('%s with pid %s is done with graceful shutdown, exit now', @config.title, process.pid)
+      _log.call this, 'notice', util.format('%s with pid %s is done with graceful shutdown, exit now', @config.title, process.pid)
+      return process.exit 0
 
     sdt = setTimeout =>
       _log.call this, 'crit', util.format('%s with pid %s could not graceful shutdown, forced exit after %s ms',  @config.title, process.pid, @config.shutdownTimeout)
