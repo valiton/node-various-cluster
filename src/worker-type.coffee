@@ -64,8 +64,9 @@ module.exports = class WorkerType
   init: (config) ->
     @config = _.defaults config, defaultConfig
     workers = []
-    for item in [1..@config.count]
-      do =>
-        _fork.call this, @config
+    if @config.count > 0
+      for item in [1..@config.count]
+        do =>
+          _fork.call this, @config
 
 
