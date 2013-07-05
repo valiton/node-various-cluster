@@ -8,6 +8,7 @@ os = require 'os'
 ###*
  * 3rd library imports
 ###
+prettySeconds = require 'pretty-seconds'
 _ = require 'lodash'
 
 
@@ -19,6 +20,8 @@ module.exports = class WorkerType
 
 
   _log = (type, msg) ->
+    if typeof process.logger is 'object'
+      return process.logger[type](msg)
     util.log msg
 
 
@@ -33,10 +36,13 @@ module.exports = class WorkerType
         _log.call self, 'notice', util.format('%s with pid %s is online', self.config.title, @process.pid)
 
       .on 'exit', (worker, code, signal) ->
+        delete process.logger
         _log.call self, 'notice', util.format('%s with pid %s exits now', self.config.title, @process.pid)
         if self.config.shutdownAll is true
           _log.call self, 'notice', util.format('worker %s is configured to shutdown app, do this now', config.title)
-          return cluster.disconnect()
+          return cluster.disconnect =>
+            _log.call this, 'notice', util.format('%s with pid %s has no workers remaining, exit after %s uptime', config.title, process.pid, prettySeconds(process.uptime()))
+            process.exit 0
 
         unless process.shuttingDown
           process.nextTick ->
@@ -57,8 +63,6 @@ module.exports = class WorkerType
    * @this {WorkerType}
   ###
   constructor: ->
-    if typeof process.logger is 'object'
-      _log = (type, msg) -> process.logger[type](msg)
 
 
   init: (config) ->

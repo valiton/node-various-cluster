@@ -28,27 +28,19 @@ Worker = require './worker'
 class VariousCluster
 
   _log = (type, msg) ->
+    if typeof process.logger is 'object'
+      return process.logger[type](msg)
     util.log msg
 
   _exit = ->
     process.shuttingDown = true
-    if Object.keys(cluster.workers).length is 0
+    workers = Object.keys(cluster.workers).length
+    if workers is 0
       _log.call this, 'notice', util.format('%s with pid %s has no workers remaining, exit after %s uptime', @config.title, process.pid, prettySeconds(process.uptime()))
       process.exit 0
+    else
+      _log.call this, 'notice', util.format('%s with pid %s waits for %s workers to shutdown', @config.title, process.pid, workers)
 
-  ###*
-   * create a new VariousCluster instance,
-   *
-   * @memberOf global
-   *
-   * @constructor
-   * @param {object} config read more about config options in README
-   * @private
-   * @this {VariousCluster}
-  ###
-  constructor: ->
-    if typeof process.logger is 'object'
-      _log = (type, msg) -> process.logger[type](msg)
 
   ###*
    * initalize the VariousCluster with the given config
@@ -63,17 +55,20 @@ class VariousCluster
       process.title = @config.title or 'various-cluster-master'
 
       cluster.on 'exit', (worker, code, signal) =>
-        _exit.call this
+        process.nextTick =>
+          _exit.call this
 
       process.on 'uncaughtException', (err) =>
         _log.call this, 'crit', util.format('%s with pid %s had uncaught exception, shutdown all workers: %s', @config.title, process.pid, err)
-        cluster.disconnect()
+        _exit.call this
+        worker.send(type: 'shutmedown') for key, worker of cluster.workers
 
       ['SIGINT', 'SIGTERM'].forEach (signal) =>
         process.on signal, =>
           _log.call this, 'notice', util.format('%s with pid %s received signal %s, shutdown all workers', @config.title, process.pid, signal)
           _exit.call this
-          cluster.disconnect()
+          worker.send(type: 'shutmedown') for key, worker of cluster.workers
+
 
       for workerConfig in @config.workers
 

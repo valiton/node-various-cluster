@@ -12,6 +12,8 @@ _ = require 'lodash'
 module.exports = class Worker
 
   _log = (type, msg) ->
+    if typeof process.logger is 'object'
+      return process.logger[type](msg)
     util.log msg
 
 
@@ -44,9 +46,10 @@ module.exports = class Worker
 
   _appendEvents = ->
     @connected = true
-    process.on 'disconnect', =>
-      @connected = false
-      _shutdown.call this
+    process.on 'message', (msg) =>
+      if msg.type is 'shutmedown'
+        @connected = false
+        _shutdown.call this
 
     process.on 'uncaughtException', (err) =>
       if @connected
@@ -68,8 +71,6 @@ module.exports = class Worker
    * @this {Worker}
   ###
   constructor: ->
-    if typeof process.logger is 'object'
-      _log = (type, msg) -> process.logger[type](msg)
     @config = JSON.parse process.env.WORKER_CONFIG
     if typeof @config isnt 'object'
       throw new Error 'WORKER_CONFIG is missing'
