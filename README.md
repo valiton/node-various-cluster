@@ -177,6 +177,10 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 
+- 0.1.6 rewrite shutdown mechanism
+
+- 0.1.5 allow worker count to be 0
+
 - 0.1.4 force exit when no shutdown-handler
 
 - 0.1.4 force exit when no shutdown-handler
@@ -192,6 +196,7 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 ## Contributors
 
 - Bastian "hereandnow" Behrens
+- Gleb Kotov
 
 ## License
 Copyright (c) 2013 Valiton GmbH
