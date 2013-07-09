@@ -40,9 +40,7 @@ module.exports = class WorkerType
         _log.call self, 'notice', util.format('%s with pid %s exits now', self.config.title, @process.pid)
         if self.config.shutdownAll is true
           _log.call self, 'notice', util.format('worker %s is configured to shutdown app, do this now', config.title)
-          return cluster.disconnect =>
-            _log.call this, 'notice', util.format('%s with pid %s has no workers remaining, exit after %s uptime', config.title, process.pid, prettySeconds(process.uptime()))
-            process.exit 0
+          worker.send(type: 'shutmedown') for key, worker of cluster.workers
 
         unless process.shuttingDown
           process.nextTick ->
