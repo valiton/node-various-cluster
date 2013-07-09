@@ -177,6 +177,8 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 
+- 0.1.7 fix shutdown in workertype
+
 - 0.1.6 rewrite shutdown mechanism
 
 - 0.1.5 allow worker count to be 0
