@@ -1,7 +1,7 @@
 {
   "name": "various-cluster",
   "description": "easily create a mulit-cluster environment with different worker-types",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "author": {
     "name": "Valiton GmbH",
     "url": "http://www.valiton.com"

@@ -53,7 +53,7 @@ module.exports = class Worker
 
     process.on 'uncaughtException', (err) =>
       if @connected
-        _log.call this, 'crit', util.format('%s with pid %s had uncaught exception: %s', @config.title, process.pid, err)
+        _log.call this, 'crit', util.format('%s with pid %s had uncaught exception: %s', @config.title, process.pid, err.stack)
         process.send 'worker-exception'
       else
         process.exit()

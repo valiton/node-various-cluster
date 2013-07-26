@@ -59,7 +59,7 @@ class VariousCluster
           _exit.call this
 
       process.on 'uncaughtException', (err) =>
-        _log.call this, 'crit', util.format('%s with pid %s had uncaught exception, shutdown all workers: %s', @config.title, process.pid, err)
+        _log.call this, 'crit', util.format('%s with pid %s had uncaught exception, shutdown all workers: %s', @config.title, process.pid, err.stack)
         _exit.call this
         worker.send(type: 'shutmedown') for key, worker of cluster.workers
 
