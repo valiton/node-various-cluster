@@ -177,6 +177,8 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 
+- 0.1.9 fix second restart of workers who will just restart
+
 - 0.1.8 log err.stack on exceptions
 
 - 0.1.7 fix shutdown in workertype

@@ -38,11 +38,11 @@ module.exports = class WorkerType
       .on 'exit', (worker, code, signal) ->
         delete process.logger
         _log.call self, 'notice', util.format('%s with pid %s exits now', self.config.title, @process.pid)
-        if self.config.shutdownAll is true
+        if !!self.config.shutdownAll
           _log.call self, 'notice', util.format('worker %s is configured to shutdown app, do this now', config.title)
           worker.send(type: 'shutmedown') for key, worker of cluster.workers
 
-        unless process.shuttingDown
+        if not process.shuttingDown or not self.config.shutdownAll
           process.nextTick ->
             _log.call self, 'notice', util.format('master with pid %s will restart this worker now', @process.pid)
             _fork.call self, config
