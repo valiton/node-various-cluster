@@ -48,6 +48,7 @@ module.exports = class Worker
     @connected = true
     process.on 'message', (msg) =>
       if msg.type is 'shutmedown'
+        process.shuttingDown = true
         @connected = false
         _shutdown.call this
 

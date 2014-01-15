@@ -33,13 +33,13 @@ class VariousCluster
     util.log msg
 
   _exit = ->
-    process.shuttingDown = true
     workers = Object.keys(cluster.workers).length
     if workers is 0
       _log.call this, 'notice', util.format('%s with pid %s has no workers remaining, exit after %s uptime', @config.title, process.pid, prettySeconds(process.uptime()))
       process.exit 0
     else
-      _log.call this, 'notice', util.format('%s with pid %s waits for %s workers to shutdown', @config.title, process.pid, workers)
+      if !!process.shuttingDown
+        _log.call this, 'notice', util.format('%s with pid %s waits for %s workers to shutdown', @config.title, process.pid, workers)
 
 
   ###*
@@ -59,12 +59,14 @@ class VariousCluster
           _exit.call this
 
       process.on 'uncaughtException', (err) =>
+        process.shuttingDown = true
         _log.call this, 'crit', util.format('%s with pid %s had uncaught exception, shutdown all workers: %s', @config.title, process.pid, err.stack)
         _exit.call this
         worker.send(type: 'shutmedown') for key, worker of cluster.workers
 
       ['SIGINT', 'SIGTERM'].forEach (signal) =>
         process.on signal, =>
+          process.shuttingDown = true
           _log.call this, 'notice', util.format('%s with pid %s received signal %s, shutdown all workers', @config.title, process.pid, signal)
           _exit.call this
           worker.send(type: 'shutmedown') for key, worker of cluster.workers

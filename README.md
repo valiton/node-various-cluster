@@ -177,6 +177,8 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 
+- 0.1.10 final working shutdown mechanism which respects all possibilties
+
 - 0.1.9 fix second restart of workers who will just restart
 
 - 0.1.8 log err.stack on exceptions
